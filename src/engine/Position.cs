@@ -18,7 +18,9 @@ namespace FEEngine.Engine {
             this.y = y;
         }
 
-        //public GameMap getMap()
+        public GameMap getMap() {
+            return this.map;
+        }
 
         public int getX() {
             return this.x;
@@ -36,11 +38,18 @@ namespace FEEngine.Engine {
             this.tile = tile;
         }
 
-        //public bool containsActor(Actor actor)
+        public bool containsActor(Actor actor) {
+            return map.positionHasGivenActor(this, actor);
+        }
 
         public char getDisplayCharacter() {
-            //if has Actor return Actor displayCharacter
-            return this.tile.getDisplayCharacter();
+            if (this.map.positionHasActor(this)) {
+                Actor actorAtLocation = this.map.getActorAtPosition(this);
+                return actorAtLocation.getDisplayCharacter();
+            }
+            else {
+                return this.tile.getDisplayCharacter();
+            }
         }
     }
 }

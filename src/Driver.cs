@@ -8,8 +8,11 @@ namespace FEEngine {
             string input;
 
             while (true) {
-                Console.WriteLine(display.toString());
+                Console.WriteLine(display.toString() + "\n");
                 input = Console.ReadLine()!;
+                if (input == "move") {
+                    display.movementTest(2, 2);
+                }
             }
         }
     }

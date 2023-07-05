@@ -1,6 +1,8 @@
 using System;
+using FEEngine.Actors;
 using FEEngine.Engine;
 using FEEngine.Utilities;
+using FEEngine.Enums;
 
 namespace FEEngine.Engine {
     public class GameMap {
@@ -9,7 +11,8 @@ namespace FEEngine.Engine {
         protected int width;
         protected int height;
         protected TileConverter tileConverter = TileConverter.getInstance();
-        //protected ActorPositionMapping actorPositions;
+        protected ActorPositionMapping actorPositions = new ActorPositionMapping();
+        protected Dictionary<string, AllyUnit> playerUnits = new Dictionary<string, AllyUnit>();
 
 
 
@@ -25,7 +28,7 @@ namespace FEEngine.Engine {
             this.map = new Position[height][];
             for (int i = 0; i < height; i++) {
                 this.map[i] = new Position[width];
-                for (int j = 0; j < height; j++) {
+                for (int j = 0; j < width; j++) {
                     this.map[i][j] = new Position(this, tileConverter.charToTile(tileCharacter, 0), j, i);
                 }
             }
@@ -47,7 +50,12 @@ namespace FEEngine.Engine {
         }
 
         public Position getPositionAt(int x, int y) {
-            return this.map[y][x];
+            try {
+                return this.map[y][x];
+            }
+            catch (Exception e) {
+                return null;
+            }
         }
 
         public Tile getTileAt(int x, int y) {
@@ -58,20 +66,51 @@ namespace FEEngine.Engine {
             this.map[y][x].setTile(tile);
         }
 
-        //public Actor getActorAt(Position position)
+        public Actor getActorAtPosition(Position position) {
+            return this.actorPositions.getActorAtPosition(position);
+        }
 
-        //public void addActor(Actor actor, Position position)
+        public void addActor(Actor actor, Position position) {
+            this.actorPositions.addActor(actor, position);
+        }
 
-        //public void removeActor(Actor actor)
+        public void removeActor(Actor actor) {
+            this.actorPositions.removeActor(actor);
+        }
 
-        //public void moveActor(Actor actor, Position position)
+        public void moveActor(Actor actor, Position position) {
+            this.actorPositions.moveActor(actor, position);
+        }
 
-        //Position getActorLocation(Actor actor)
+        public void addPlayerUnit(AllyUnit actor, Position position) {
+            this.playerUnits[actor.getName()] = actor;
+            addActor(actor, position);
+        }
 
-        //bool locationHasActor(Position position)
+        public void removePlayerUnit(AllyUnit actor) {
+            this.playerUnits.Remove(actor.getName());
+            removeActor(actor);
+        }
+
+        public void movePlayerUnit(string name, Position position) {
+            AllyUnit playerUnit = this.playerUnits[name];
+            moveActor(playerUnit, position);
+        }
+
+        public Position getActorLocation(Actor actor) {
+            return this.actorPositions.getActorLocation(actor);
+        }
+
+        public bool positionHasActor(Position position) {
+            return this.actorPositions.locationHasActor(position);
+        }
+
+        public bool positionHasGivenActor(Position position, Actor actor) {
+            return this.actorPositions.positionHasGivenActor(position, actor);
+        }
 
         public void tick() {
-            //Iterate actors
+            this.actorPositions.tickActors();
 
             for (int i = 0; i < height; i++) {
                 for (int j = 0; j < width; j++) {
